@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Fetcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .news-container {
+      margin: 20px;
+    }
+    .news-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .news-item h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .news-item p {
+      font-size: 14px;
+    }
+    .news-item a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Top News Headlines</h1>
+  
+  <div class="news-container" id="newsContainer">
+    <!-- News items will be displayed here -->
+  </div>
+
+  <script>
+    // Replace with your own API key from NewsAPI
+    const apiKey = 'YOUR_API_KEY_HERE';
+
+    // URL to fetch news
+    const url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
+
+    // Function to fetch news and display it
+    async function fetchNews() {
+      try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch news');
+        }
+
+        const data = await response.json();
+        const newsContainer = document.getElementById('newsContainer');
+
+        // Check if we have articles in the response
+        if (data.articles && data.articles.length > 0) {
+          data.articles.forEach(article => {
+            // Create a new news item div for each article
+            const newsItem = document.createElement('div');
+            newsItem.classList.add('news-item');
+
+            // Add title, description, and link to the news item
+            newsItem.innerHTML = `
+              <h3>${article.title}</h3>
+              <p>${article.description || 'No description available.'}</p>
+              <a href="${article.url}" target="_blank">Read more</a>
+            `;
+            
+            // Append the news item to the container
+            newsContainer.appendChild(newsItem);
+          });
+        } else {
+          newsContainer.innerHTML = '<p>No news found.</p>';
+        }
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        document.getElementById('newsContainer').innerHTML = '<p>Error fetching news. Please try again later.</p>';
+      }
+    }
+
+    // Call the fetchNews function when the page loads
+    window.onload = fetchNews;
+  </script>
+  
+</body>
+</html>
